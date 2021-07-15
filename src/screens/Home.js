@@ -214,12 +214,12 @@ export default function Home() {
                 setTabIndex(index)
             },            
             content:
-                <>
+                <div>
                     <ToastContainer
                         position="bottom-right"
                     />
                     {list.length > 0 ?
-                        <>
+                        <div>
                             {list.map(item =>
                             
                                 <Card
@@ -265,13 +265,13 @@ export default function Home() {
                                     />
                                 </Card>
                             )}
-                        </>
+                        </div>
                         :
                         <div>
                             <CardEmpty title="Add Your Task Today"/>
                         </div>
                     }
-                </>
+                </div>
         },
 
         {
@@ -282,12 +282,12 @@ export default function Home() {
                 setTabIndex(index)
             },
             content: 
-                <>
+                <div>
                     <ToastContainer
                         position="bottom-right"
                     />
                     {list.length > 0 ?
-                        <>
+                        <div>
                             {list.map(item =>
 
                                 <Card
@@ -332,13 +332,13 @@ export default function Home() {
                                     />
                                 </Card>
                             )}
-                        </>
+                        </div>
                         :
                         <div>
                             <CardEmpty title="No Task For This Week"/>
                         </div>
                     }
-                </>
+                </div>
         },
 
         {
@@ -349,12 +349,12 @@ export default function Home() {
                 setTabIndex(index)
             },
             content: 
-                <>
+                <div>
                     <ToastContainer
                         position="bottom-right"
                     />
                     {list.length > 0 ?
-                        <>
+                        <div>
                             {list.map(item =>
 
                                 <Card
@@ -399,21 +399,21 @@ export default function Home() {
                                     />
                                 </Card>
                             )}
-                        </>
+                        </div>
                         :
                         <div>
                             <CardEmpty title="No Task For This Month"/>
                         </div>
                     }
-                </>
+                </div>
         }
     ];
 
     return (
         <div>
-            <div className="relative flex h-auto lg:h-screen overflow-y-auto">
-                <aside className="bg-gray-300  flex lg:flex-col justify-between py-6 px-4 fixed bottom-0 h-auto w-full lg:h-full lg:w-auto">
-                    <div className="flex justify-center items-center">
+            <div className="relative flex h-auto overflow-y-auto lg:h-screen">
+                <aside className="fixed bottom-0 flex justify-between w-full h-auto px-4 py-6 bg-gray-300 lg:flex-col lg:h-full lg:w-auto">
+                    <div className="flex items-center justify-center">
                         <FontAwesomeIcon icon={["fas", "search"]} color="#6b6b6b" size="lg" />
                     </div>
                     <div className="flex justify-center">
@@ -436,7 +436,7 @@ export default function Home() {
                         />
 
                     </div>
-                    <div className="flex justify-center items-center">
+                    <div className="flex items-center justify-center">
                         <FontAwesomeIcon icon={["fas", "sign-out-alt"]} color="#6b6b6b" size="lg" className="" />
                     </div>
                 </aside>
@@ -446,16 +446,16 @@ export default function Home() {
                             <div className="sticky top-0" style={{ zIndex: -1 }}>
                                 <div className="flex justify-between p-4" >
                                     <div>
-                                        <h1 className="font-semibold text-2xl lg:text-3xl">to-do list</h1>
+                                        <h1 className="text-2xl font-semibold lg:text-3xl">to-do list</h1>
                                     </div>
                                     <div>
-                                        <h1 className="font-semibold text-3xl px-4">
+                                        <h1 className="px-4 text-3xl font-semibold">
 
                                         </h1>
                                     </div>
                                 </div>
-                                <div className="flex justify-center items-center h-full px-6 mt-4 lg:mt-36">
-                                    <p className="myfont text-3xl lg:text-6xl font-bold leading-10 lg:leading-tight">
+                                <div className="flex items-center justify-center h-full px-6 mt-4 lg:mt-36">
+                                    <p className="text-3xl font-bold leading-10 myfont lg:text-6xl lg:leading-tight">
                                         Hello Safwan, welcome back.
                                         You have <span className="text-pink-500 underline">{words} </span>
                                         remaining tasks

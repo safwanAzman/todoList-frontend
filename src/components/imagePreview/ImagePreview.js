@@ -22,17 +22,17 @@ function ImagePreview(props) {
 
 
     return (
-    <div className="bg-gray-300 hover:bg-gray-400 w-40 h-full py-4 px-4 rounded-lg cursor-pointer">
+    <div className="w-40 h-full px-4 py-4 bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400">
             <label htmlFor="file_name">
             {image.preview ? (
             <img src={image.preview} alt="img" className="w-40 h-36"/>
             ):(
-                <>
-                    <div className="h-36 flex flex-col items-center justify-center text-sm font-semibold text-center text-pink-700">
+                <div>
+                    <div className="flex flex-col items-center justify-center text-sm font-semibold text-center text-pink-700 h-36">
                         <FontAwesomeIcon icon={["fas", "cloud-upload-alt"]} color="#bf125d" size="lg" className="animate-bounce" />
                         Upload Image
                     </div>
-                </>
+                </div>
             )}
         </label>
             <input type="file" id="file_name" style={{ display: "none" }} onChange={props.onChange}/>

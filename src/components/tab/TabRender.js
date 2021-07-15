@@ -12,10 +12,10 @@ export default function TabsRender(props , { color = "pink" }) {
     const tabLists = props.data;
     const tabIndex = props.index;
     return (
-        <>
+        <div>
             <div className="flex flex-wrap ">
                 <div className="w-full">
-                    <ul className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row" role="tablist">
+                    <ul className="flex flex-row flex-wrap pt-3 pb-4 mb-0 list-none" role="tablist">
                         {tabLists.map((tab) => (
                             <TabTitle
                                 anyclass={"text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal " 
@@ -37,7 +37,7 @@ export default function TabsRender(props , { color = "pink" }) {
                 </div>
             </div>
             
-        </>
+        </div>
     );
 
 }
