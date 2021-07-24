@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import {Link} from "react-router-dom";
 import '../App.css';
+import {Link,useHistory} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons"
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { ToWords } from 'to-words';
+
+
+
+
 
 //component
 import {
@@ -17,35 +20,36 @@ import {
     TabRender,
     Card,
     CardEmpty,
-    LogoutBtn
+    LogoutBtn,
+    GridAutoflow
 } from '../components'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+
 library.add(fas, fab);
 
-export default function Home() {
+
+export default function Profile() {
+
+
 
     const token = localStorage.getItem("auth_token");
     
+    const [todolist, setTodoList] = useState([]);
 
-    //list of tasks
-    const [list, setList] = useState([]);
+    const [completelist, setCompleteList] = useState([]);
 
-    //list of profile
-    const [profile, setProfile] = useState([]);
+    const [daylist, setdayList] = useState([]);
 
-    const profileList = async () => {
-        try {
-            const response = await axios.get('api/profile')
-            setProfile([{name:response.data.user.name}])
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    const [weeklist, setweekList] = useState([]);
+
+    const [monthlist, setmonthList] = useState([]);
     
-    
+
+
     //get id for edit 
     const [listId, setListId] = useState(null);
 
@@ -65,62 +69,82 @@ export default function Home() {
     //Add Tasks slider
     const [addSlide, setAddSlideState] = useState(false)
 
-
     useEffect(() => {
-        lists()
-        profileList()
+        todoTasks()
+        completeTasks()
+        listsday()
+        listsweek()
+        listsmonth()
     }, []);
 
-    const triggerday = (type) => {
+    const triggertask = (type) => {
         
-        if (type == 'DAY') {
-            lists()
-        }else if (type == 'WEEK') {
-            listsweek()
-        } else{
-            listsmonth()
+        if (type == 'completeTaks') {
+            completeTasks()
+        }else if (type == 'todoTasks') {
+            todoTasks()
         }
     }
-
-//get list of tasks by token
     
-    //Read data
-    const lists = async () => {
+    //Read Completelist
+    const completeTasks = async () => {
         try {
-            const response = await axios.get(`api/tasks`)
-            setList(response.data.tasks)
+            const response = await axios.get(`api/tasksComplete`)
+            setCompleteList(response.data.tasks)
             
         } catch (error) {
             console.error(error);
         }
     }
 
-    //Read Data by Week
-    const listsweek = async () => {
+    //Read todolist
+    const todoTasks = async () => {
         try {
-            const response = await axios.get('api/tasksWeek')
-            setList(response.data.tasks)
+            const response = await axios.get('api/tasksTodo')
+            setTodoList(response.data.tasks)
         } catch (error) {
             console.error(error);
         }
     }
 
-
-    //Read Data by Month
-    const listsmonth = async () => {
-        try {
-            const response = await axios.get('api/tasksMonth')
-            setList(response.data.tasks)
-        } catch (error) {
-            console.error(error);
+        //Read by day
+        const listsday = async () => {
+            try {
+                const response = await axios.get(`api/tasks`)
+                setdayList(response.data.tasks)
+                
+            } catch (error) {
+                console.error(error);
+            }
         }
-    }
+    
+        //Read Data by Week
+        const listsweek = async () => {
+            try {
+                const response = await axios.get('api/tasksWeek')
+                setweekList(response.data.tasks)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    
+    
+        //Read Data by Month
+        const listsmonth = async () => {
+            try {
+                const response = await axios.get('api/tasksMonth')
+                setmonthList(response.data.tasks)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
 
     //Update status
     const updateStatus = async (id,type) => {
         try {
             const response = await axios.get(`api/tasks/${id}`)
-            triggerday(type)
+            triggertask(type)
 
         } catch (error) {
             console.error(error);
@@ -132,8 +156,8 @@ export default function Home() {
     const deleteTask = async (id,type) => {
         try {
             const response = await axios.delete(`api/tasks/${id}`)
-            lists()
-            triggerday(type)
+            todoTasks()
+            triggertask(type)
             toast.success("Your task successfully deleted")
             return
         } catch (error) {
@@ -141,9 +165,6 @@ export default function Home() {
 
         }
     }
-
-    //validate using Formik
-    
 
     //Create data
     const formik = useFormik({
@@ -171,7 +192,7 @@ export default function Home() {
                     'Accept': 'application/json' , 
                     'Content-Type':"multipart/form-data" 
                 } })
-                lists()
+                todoTasks()
                 toast.success("Your task successfully added")
                 setAddSlideState(!addSlide)
             } catch (error) {
@@ -207,8 +228,8 @@ export default function Home() {
                     'Content-Type':"multipart/form-data" 
                 } }
                 ) 
-                lists()
-                triggerday(type)
+                todoTasks()
+                triggertask(type)
                 toast.success("Your task successfully updated")
                 setEditSlideState(!editSlide)
             } catch (error) {
@@ -223,11 +244,6 @@ export default function Home() {
         }
     });
     
-
-    //convert number to words
-    const toWords = new ToWords();
-    let words = toWords.convert(list.length);
-
     //upload image
     const [image, setImage] = useState({ preview: "", raw: "" });
     const handleChange = e => {
@@ -244,10 +260,10 @@ export default function Home() {
 
     const data = [
         {
-            title: "TODAY",
+            title: "TO-DO TASKS",
             tab: '1',
             changeIndex: (index) => {
-                lists()
+                todoTasks()
                 setTabIndex(index)
             },            
             content:
@@ -255,9 +271,9 @@ export default function Home() {
                     <ToastContainer
                         position="bottom-right"
                     />
-                    {list.length > 0 ?
+                    {todolist.length > 0 ?
                         <div>
-                            {list.map(item =>
+                            {todolist.map(item =>
                             
                                 <Card
                                     taskImg={"http://127.0.0.1:8000/storage/" + item.file_name }
@@ -265,8 +281,8 @@ export default function Home() {
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
                                     complete={item.status}
-                                    checkedTask={() => updateStatus(item.id,"DAY")}
-                                    onClick={() => deleteTask(item.id,"DAY")}
+                                    checkedTask={() => updateStatus(item.id,"todoTasks")}
+                                    onClick={() => deleteTask(item.id,"todoTasks")}
                                 >
                                     <Slideover bg="gray" icon="marker" title="Edit Task" description="Enjoy your Work and always productive"
                                         setSlide={() => 
@@ -305,17 +321,17 @@ export default function Home() {
                         </div>
                         :
                         <div>
-                            <CardEmpty title="Add Your Task Today"/>
+                            <CardEmpty title="No Todo Tasks Today"/>
                         </div>
                     }
                 </div>
         },
 
         {
-            title: "WEEKLY",
+            title: "COMPLETE TASKS",
             tab: '2',
             changeIndex: (index) => {
-                listsweek()
+                completeTasks()
                 setTabIndex(index)
             },
             content: 
@@ -323,9 +339,9 @@ export default function Home() {
                     <ToastContainer
                         position="bottom-right"
                     />
-                    {list.length > 0 ?
+                    {completelist.length > 0 ?
                         <div>
-                            {list.map(item =>
+                            {completelist.map(item =>
 
                                 <Card
                                     taskImg={"http://127.0.0.1:8000/storage/" + item.file_name}
@@ -333,8 +349,8 @@ export default function Home() {
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
                                     complete={item.status}
-                                    checkedTask={() => updateStatus(item.id,"WEEK")}
-                                    onClick={() => deleteTask(item.id,"WEEK")}
+                                    checkedTask={() => updateStatus(item.id,"completeTaks")}
+                                    onClick={() => deleteTask(item.id,"completeTaks")}
                                 >
                                     <Slideover bg="gray" icon="marker" title="Edit Task" description="Enjoy your Work and always productive"
                                         setSlide={() => {
@@ -372,87 +388,20 @@ export default function Home() {
                         </div>
                         :
                         <div>
-                            <CardEmpty title="No Task For This Week"/>
+                            <CardEmpty title="No Complete Tasks Today"/>
                         </div>
                     }
                 </div>
         },
-
-        {
-            title: "MONTHLY",
-            tab: '3',
-            changeIndex: (index) => {
-                listsmonth()
-                setTabIndex(index)
-            },
-            content: 
-                <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
-                    {list.length > 0 ?
-                        <div>
-                            {list.map(item =>
-
-                                <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name}
-                                    taskName={item.task_name}
-                                    levelTask={item.task_level}
-                                    dateTask={item.expired}
-                                    complete={item.status}
-                                    checkedTask={() => updateStatus(item.id,'MONTH')}
-                                    onClick={() => deleteTask(item.id,"MONTH")}
-                                >
-                                    <Slideover bg="gray" icon="marker" title="Edit Task" description="Enjoy your Work and always productive"
-                                        setSlide={() => {
-                                            setEditData(
-                                                {
-
-                                                    id: item.id,
-                                                    file_name: item.file_name,
-                                                    task_name: item.task_name,
-                                                    task_level: item.task_level,
-                                                    start_date: item.start_date,
-                                                    end_date: item.end_date,
-                                                }
-                                            )
-
-                                            setListId(item.id)
-                                            setEditSlideState(!editSlide)
-                                        }
-                                        }
-                                        slide={editSlide}
-                                        formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name}
-                                        imageChange={handleChange}
-                                        TaskNameChange={updateFormik.handleChange}
-                                        TaskNameValue={updateFormik.values.task_name}
-                                        TaskLevelChange={(e) => { updateFormik.setFieldValue('task_level', e.target.value) }}
-                                        TaskLevelValue={updateFormik.values.task_level}
-                                        TaskStarDateChange={updateFormik.handleChange}
-                                        TaskStarDateValue={updateFormik.values.start_date}
-                                        TaskEndDateChange={updateFormik.handleChange}
-                                        TaskEndDateValue={updateFormik.values.end_date}
-                                    />
-                                </Card>
-                            )}
-                        </div>
-                        :
-                        <div>
-                            <CardEmpty title="No Task For This Month"/>
-                        </div>
-                    }
-                </div>
-        }
     ];
 
     return (
         <div>
             <div className="relative flex h-auto overflow-y-auto lg:h-screen">
                 <aside className="fixed bottom-0 flex justify-between w-full h-auto px-4 py-6 bg-gray-300 lg:flex-col lg:h-full lg:w-auto">
-                    <Link to="/Profile" className="flex items-center justify-center">
+                    <Link to="/Home" className="flex items-center justify-center">
                         <div>
-                            <FontAwesomeIcon icon={["fas", "user-circle"]} color="#6b6b6b" size="2x" />
+                            <FontAwesomeIcon icon={["fas", "home"]} color="#6b6b6b" size="2x" />
                         </div>
                     </Link>
                     <div className="flex justify-center">
@@ -488,14 +437,90 @@ export default function Home() {
                                         <h1 className="text-2xl font-semibold lg:text-3xl">to-do list</h1>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-center h-full px-6 mt-4 lg:mt-36">
-                                    <p className="text-3xl font-bold leading-10 myfont lg:text-5xl lg:leading-tight">
-                                        Hello {(profile[0]) ? profile[0].name:null}, welcome back.
-                                        You have <span className="text-pink-500 underline">{words} </span>
-                                        remaining tasks
-                                        to complete
-                                        this {tabIndex == 1 ? "day" : tabIndex == 2 ? "week" : "month"}
-                                    </p>
+                                <div className="flex items-center justify-center h-full px-6 mt-4 space-x-4 lg:mt-18">
+
+                                <GridAutoflow mobile="2" sm="2" md="2" lg="2" xl="2" anyclass="col-span-12  w-screen">
+                                    <div className="p-4 bg-pink-600 rounded-lg shadow-xl">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "clipboard-list"]} color="#db2777" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            to-do tasks
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                            {todolist.length}
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-green-600 rounded-lg shadow-xl">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "clipboard-check"]} color="#34d399" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            Complete tasks
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                            {completelist.length}
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-yellow-500 rounded-lg shadow-xl">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "calendar-day"]} color="#f59e0b" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            Today tasks
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                            {daylist.length}
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-indigo-600 rounded-lg shadow-xl">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "calendar-week"]} color="#4f46e5" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            Weekly tasks
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                            {weeklist.length}
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-blue-600 rounded-lg shadow-xl">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "calendar-alt"]} color="#2563eb" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            Monthly tasks
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                            {monthlist.length} 
+                                        </div>
+                                    </div>
+
+                                    <div className="w-full p-4 bg-purple-500 rounded-lg ">
+                                        <div className="flex items-center justify-center">
+                                            <div className="flex items-center px-5 py-4 bg-white rounded-full">
+                                                <FontAwesomeIcon icon={["fas", "chart-bar"]} color="#8b5cf6" size="2x" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xs font-semibold text-center text-white lg:text-lg">
+                                            Overall Progress tasks this month
+                                        </div>
+                                        <div className="flex justify-center mt-2 text-xl font-semibold text-center text-white lg:text-6xl">
+                                          { (parseInt(completelist.length / monthlist.length * 100) ? parseInt(completelist.length / monthlist.length * 100) : 0) }%
+                                        </div>
+                                    </div>
+                                </GridAutoflow>
+                                    
                                 </div>
                             </div>
                         </GridManualitem>
