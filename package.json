@@ -36,7 +36,6 @@
       "react-app/jest"
     ]
   },
- 
   "devDependencies": {
     "autoprefixer": "^9.8.6",
     "postcss": "^7.0.36",
