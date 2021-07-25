@@ -9387,7 +9387,6 @@
     "neo-async" "^2.5.0"
   optionalDependencies:
     "chokidar" "^3.4.0"
-    "chokidar2" "file:./chokidar2"
 
 "wbuf@^1.1.0", "wbuf@^1.7.2":
   "integrity" "sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA=="
