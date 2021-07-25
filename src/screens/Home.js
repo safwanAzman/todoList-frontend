@@ -281,7 +281,7 @@ export default function Home() {
                                 >
                                     <Slideover bg="gray" icon="marker" title="Edit Task" description="Enjoy your Work and always productive"
                                         setSlide={() => 
-                                            {   
+                                            {    
                                                 setEditData(
                                                     {
                                                         
