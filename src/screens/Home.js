@@ -9,6 +9,10 @@ import axios from 'axios';
 import { useFormik } from 'formik';
 import { ToWords } from 'to-words';
 
+import ImageCard from '../test.png';
+
+import Loading from '../screens/Loading';
+
 //component
 import {
     Slideover,
@@ -20,14 +24,15 @@ import {
     LogoutBtn
 } from '../components'
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 library.add(fas, fab);
 
 export default function Home() {
 
     const token = localStorage.getItem("auth_token");
+    
+
+    const [isLoading, setIsLoading] = useState(false);
+
     
 
     //list of tasks
@@ -51,7 +56,7 @@ export default function Home() {
 
     //edit State
     const [editData, setEditData] = useState({
-        user_id: '1',
+        user_id: '',
         task_name: '',
         task_level: '',
         start_date: '',
@@ -134,27 +139,38 @@ export default function Home() {
             const response = await axios.delete(`api/tasks/${id}`)
             lists()
             triggerday(type)
-            toast.success("Your task successfully deleted")
-            return
+            loadingEditData()
+            window.location.href = '/Home'
         } catch (error) {
             console.error(error);
 
         }
     }
 
-    //validate using Formik
-    
+    //loading Create Data
+    const loadingCreateData = () => {
+        const data = {
+            task_name: formik.values.task_name == '',
+            task_level: formik.values.task_level == '',
+            start_date: formik.values.start_date == '',
+            end_date: formik.values.end_date == '',
+        }
+        if(data.task_name || data.task_level || data.start_date || data.end_date){
+            setIsLoading(false);
+        }else
+        {
+            setIsLoading(true);
+        }
+    }
 
+    //loading Edit Data
+    const loadingEditData = () => {
+        setIsLoading(true);
+    }
+    
     //Create data
     const formik = useFormik({
-        initialValues: {
-            user_id: '',
-            task_name: '',
-            task_level: '',
-            start_date: '',
-            end_date: '',
-            file_name: ''
-        },
+        initialValues:editData,
         onSubmit: async (values, {resetForm}) => {
             resetForm(values)
             setImage(values)
@@ -172,18 +188,12 @@ export default function Home() {
                     'Content-Type':"multipart/form-data" 
                 } })
                 lists()
-                toast.success("Your task successfully added")
                 setAddSlideState(!addSlide)
+                window.location.href = '/home'
             } catch (error) {
                 console.error(error);
             }
         },
-        onSubmitSuccess: values => {
-            console.log(values);
-        },
-        onSubmitFail: values => {
-            console.log(values);
-        }
     });
 
     
@@ -209,7 +219,7 @@ export default function Home() {
                 ) 
                 lists()
                 triggerday(type)
-                toast.success("Your task successfully updated")
+                window.location.href = '/home'
                 setEditSlideState(!editSlide)
             } catch (error) {
                 console.error(error);
@@ -252,15 +262,16 @@ export default function Home() {
             },            
             content:
                 <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
                     {list.length > 0 ?
                         <div>
                             {list.map(item =>
                             
                                 <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name }
+                                    taskImg={
+                                        item.file_name == '' ?
+                                        (ImageCard):
+                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                    }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
@@ -289,7 +300,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name }
+                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name }
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -299,6 +310,7 @@ export default function Home() {
                                         TaskStarDateValue={updateFormik.values.start_date}
                                         TaskEndDateChange={updateFormik.handleChange}
                                         TaskEndDateValue={updateFormik.values.end_date}
+                                        loading={loadingEditData}
                                     />
                                 </Card>
                             )}
@@ -320,15 +332,16 @@ export default function Home() {
             },
             content: 
                 <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
                     {list.length > 0 ?
                         <div>
                             {list.map(item =>
 
                                 <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name}
+                                    taskImg={
+                                        item.file_name == '' ?
+                                        (ImageCard):
+                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                    }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
@@ -356,7 +369,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name}
+                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -366,6 +379,7 @@ export default function Home() {
                                         TaskStarDateValue={updateFormik.values.start_date}
                                         TaskEndDateChange={updateFormik.handleChange}
                                         TaskEndDateValue={updateFormik.values.end_date}
+                                        loading={loadingEditData}
                                     />
                                 </Card>
                             )}
@@ -387,15 +401,16 @@ export default function Home() {
             },
             content: 
                 <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
                     {list.length > 0 ?
                         <div>
                             {list.map(item =>
 
                                 <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name}
+                                    taskImg={
+                                        item.file_name == '' ?
+                                        (ImageCard):
+                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                    }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
@@ -423,7 +438,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name}
+                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -433,6 +448,7 @@ export default function Home() {
                                         TaskStarDateValue={updateFormik.values.start_date}
                                         TaskEndDateChange={updateFormik.handleChange}
                                         TaskEndDateValue={updateFormik.values.end_date}
+                                        loading={loadingEditData}
                                     />
                                 </Card>
                             )}
@@ -448,6 +464,8 @@ export default function Home() {
 
     return (
         <div>
+            { isLoading ? <Loading /> : null}
+            {/* <Loading />  */}
             <div className="relative flex h-auto overflow-y-auto lg:h-screen">
                 <aside className="fixed bottom-0 flex justify-between w-full h-auto px-4 py-6 bg-gray-300 lg:flex-col lg:h-full lg:w-auto">
                     <Link to="/Profile" className="flex items-center justify-center">
@@ -456,9 +474,6 @@ export default function Home() {
                         </div>
                     </Link>
                     <div className="flex justify-center">
-                        <ToastContainer
-                            position="bottom-right"
-                        />
                         <Slideover bg="pink" icon="plus" title="Add Task" description="Enjoy your Work and always productive"
                             imagePreview={image.preview}
                             imageChange={handleChange}
@@ -472,6 +487,7 @@ export default function Home() {
                             TaskStarDateValue={formik.values.start_date}
                             TaskEndDateChange={formik.handleChange}
                             TaskEndDateValue={formik.values.end_date}
+                            loading={loadingCreateData}
                         />
 
                     </div>
@@ -479,6 +495,7 @@ export default function Home() {
                         <LogoutBtn/>
                     </div>
                 </aside>
+                
                 <div className="container w-full ml-0 lg:ml-20">
                     <GridManualflow anyclass="h-full w-full " gap="0">
                         <GridManualitem mobile="12" sm="12" md="12" lg="7" xl="7" anyclass="py-4 px-2 ">
@@ -489,7 +506,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-center h-full px-6 mt-4 lg:mt-36">
-                                    <p className="text-3xl font-bold leading-10 myfont lg:text-5xl lg:leading-tight">
+                                    <p className="text-3xl font-bold leading-10 myfont lg:text-6xl lg:leading-tight">
                                         Hello {(profile[0]) ? profile[0].name:null}, welcome back.
                                         You have <span className="text-pink-500 underline">{words} </span>
                                         remaining tasks

@@ -118,8 +118,8 @@ export default function Login() {
                             
                             <Input 
                             type="password" 
-                            name="password" v
-                            alue={login.password} 
+                            name="password" 
+                            value={login.password} 
                             onChange={handleInput} 
                             placeholder="Password" 
                             width="w-80 lg:w-96"

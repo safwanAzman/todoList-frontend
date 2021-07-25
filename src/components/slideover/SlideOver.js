@@ -31,7 +31,7 @@ function SlideOver(props) {
                 <FontAwesomeIcon icon={["fas", `${props.icon}`]} color="#ffffff" size="lg" className="" />
             </button>
 
-            <div className={props.slide ? `fixed inset-0 overflow-hidden z-50` : `hidden` }>
+            <div className={props.slide ? `fixed inset-0 overflow-hidden z-40` : `hidden` }>
                 <div className="absolute inset-0 overflow-hidden">
 
                     <div className="absolute inset-0 bg-black opacity-30"></div>
@@ -114,7 +114,7 @@ function SlideOver(props) {
 
                                                     </GridAutoflow>
                                                     <GridAutoflow mobile="1" sm="1" md="1" lg="1" xl="1" anyclass="py-6">
-                                                        <button
+                                                        <button onClick={props.loading}
                                                             class="bg-pink-600 hover:bg-pink-500 text-white font-bold p-2 rounded w-full"
                                                             type="submit" >
                                                             Submit

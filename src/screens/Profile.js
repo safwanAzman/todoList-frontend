@@ -8,9 +8,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons"
 import axios from 'axios';
 import { useFormik } from 'formik';
 
-
-
-
+import Loading from '../screens/Loading';
 
 //component
 import {
@@ -24,8 +22,7 @@ import {
     GridAutoflow
 } from '../components'
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import ImageCard from '../test.png';
 
 
 
@@ -47,6 +44,8 @@ export default function Profile() {
     const [weeklist, setweekList] = useState([]);
 
     const [monthlist, setmonthList] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(false);
     
 
 
@@ -145,6 +144,7 @@ export default function Profile() {
         try {
             const response = await axios.get(`api/tasks/${id}`)
             triggertask(type)
+            window.location.href = '/Profile'
 
         } catch (error) {
             console.error(error);
@@ -158,13 +158,35 @@ export default function Profile() {
             const response = await axios.delete(`api/tasks/${id}`)
             todoTasks()
             triggertask(type)
-            toast.success("Your task successfully deleted")
-            return
+            loadingEditData()
+            window.location.href = '/Profile'
         } catch (error) {
             console.error(error);
 
         }
     }
+
+     //loading Create Data
+    const loadingCreateData = () => {
+        const data = {
+            task_name: formik.values.task_name == '',
+            task_level: formik.values.task_level == '',
+            start_date: formik.values.start_date == '',
+            end_date: formik.values.end_date == '',
+        }
+        if(data.task_name || data.task_level || data.start_date || data.end_date){
+            setIsLoading(false);
+        }else
+        {
+            setIsLoading(true);
+        }
+    }
+
+    //loading Edit Data
+    const loadingEditData = () => {
+        setIsLoading(true);
+    }
+    
 
     //Create data
     const formik = useFormik({
@@ -193,8 +215,8 @@ export default function Profile() {
                     'Content-Type':"multipart/form-data" 
                 } })
                 todoTasks()
-                toast.success("Your task successfully added")
                 setAddSlideState(!addSlide)
+                window.location.href = '/Profile'
             } catch (error) {
                 console.error(error);
             }
@@ -230,8 +252,8 @@ export default function Profile() {
                 ) 
                 todoTasks()
                 triggertask(type)
-                toast.success("Your task successfully updated")
                 setEditSlideState(!editSlide)
+                window.location.href = '/Profile'
             } catch (error) {
                 console.error(error);
             }
@@ -268,15 +290,16 @@ export default function Profile() {
             },            
             content:
                 <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
                     {todolist.length > 0 ?
                         <div>
                             {todolist.map(item =>
                             
                                 <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name }
+                                    taskImg={
+                                        item.file_name == '' ?
+                                        (ImageCard):
+                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                    }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
@@ -305,7 +328,7 @@ export default function Profile() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name }
+                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name }
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -315,6 +338,7 @@ export default function Profile() {
                                         TaskStarDateValue={updateFormik.values.start_date}
                                         TaskEndDateChange={updateFormik.handleChange}
                                         TaskEndDateValue={updateFormik.values.end_date}
+                                        loading={loadingEditData}
                                     />
                                 </Card>
                             )}
@@ -336,15 +360,16 @@ export default function Profile() {
             },
             content: 
                 <div>
-                    <ToastContainer
-                        position="bottom-right"
-                    />
                     {completelist.length > 0 ?
                         <div>
                             {completelist.map(item =>
 
                                 <Card
-                                    taskImg={"http://127.0.0.1:8000/storage/" + item.file_name}
+                                    taskImg={
+                                        item.file_name == '' ?
+                                        (ImageCard):
+                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                    }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
                                     dateTask={item.expired}
@@ -372,7 +397,7 @@ export default function Profile() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "http://127.0.0.1:8000/storage/" + updateFormik.values.file_name}
+                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -382,6 +407,7 @@ export default function Profile() {
                                         TaskStarDateValue={updateFormik.values.start_date}
                                         TaskEndDateChange={updateFormik.handleChange}
                                         TaskEndDateValue={updateFormik.values.end_date}
+                                        loading={loadingEditData}
                                     />
                                 </Card>
                             )}
@@ -397,6 +423,7 @@ export default function Profile() {
 
     return (
         <div>
+            { isLoading ? <Loading /> : null}
             <div className="relative flex h-auto overflow-y-auto lg:h-screen">
                 <aside className="fixed bottom-0 flex justify-between w-full h-auto px-4 py-6 bg-gray-300 lg:flex-col lg:h-full lg:w-auto">
                     <Link to="/Home" className="flex items-center justify-center">
@@ -405,9 +432,6 @@ export default function Profile() {
                         </div>
                     </Link>
                     <div className="flex justify-center">
-                        <ToastContainer
-                            position="bottom-right"
-                        />
                         <Slideover bg="pink" icon="plus" title="Add Task" description="Enjoy your Work and always productive"
                             imagePreview={image.preview}
                             imageChange={handleChange}
@@ -421,6 +445,7 @@ export default function Profile() {
                             TaskStarDateValue={formik.values.start_date}
                             TaskEndDateChange={formik.handleChange}
                             TaskEndDateValue={formik.values.end_date}
+                            loading={loadingCreateData}
                         />
 
                     </div>
