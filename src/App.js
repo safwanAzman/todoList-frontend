@@ -17,7 +17,7 @@ import axios from "axios";
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 
 
-axios.defaults.baseURL = "https://todolist.safwan-azman.ml/";
+axios.defaults.baseURL = "https://api-todolist.safwan-azman.ml/";
 axios.defaults.headers.post['Content-Type'] = "application/json";
 axios.defaults.headers.post['Accept'] = "application/json";
 axios.defaults.withCredentials = true;

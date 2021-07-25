@@ -270,7 +270,7 @@ export default function Home() {
                                     taskImg={
                                         item.file_name == '' ?
                                         (ImageCard):
-                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                        "https://api-todolist.safwan-azman.ml/storage/" + item.file_name 
                                     }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
@@ -300,7 +300,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name }
+                                        imagePreview={image.preview ? image.preview : "https://api-todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name }
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -340,7 +340,7 @@ export default function Home() {
                                     taskImg={
                                         item.file_name == '' ?
                                         (ImageCard):
-                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                        "https://api-todolist.safwan-azman.ml/storage/" + item.file_name 
                                     }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
@@ -369,7 +369,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
+                                        imagePreview={image.preview ? image.preview : "https://api-todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
@@ -409,7 +409,7 @@ export default function Home() {
                                     taskImg={
                                         item.file_name == '' ?
                                         (ImageCard):
-                                        "https://todolist.safwan-azman.ml/storage/" + item.file_name 
+                                        "https://api-todolist.safwan-azman.ml/storage/" + item.file_name 
                                     }
                                     taskName={item.task_name}
                                     levelTask={item.task_level}
@@ -438,7 +438,7 @@ export default function Home() {
                                         }
                                         slide={editSlide}
                                         formSubmit={updateFormik.handleSubmit}
-                                        imagePreview={image.preview ? image.preview : "https://todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
+                                        imagePreview={image.preview ? image.preview : "https://api-todolist.safwan-azman.ml/storage/" + updateFormik.values.file_name}
                                         imageChange={handleChange}
                                         TaskNameChange={updateFormik.handleChange}
                                         TaskNameValue={updateFormik.values.task_name}
